@@ -1,5 +1,5 @@
 # PG-Life
-PG Life Website – Student Accommodation Platform 🏘️ 
+PG Life – Student Accommodation Platform 🏘️ 
 <br>
 A responsive web application designed to help students easily search and compare PG accommodations 🏘️ based on location, amenities, pricing, and reviews.
 <br> 
