@@ -1,7 +1,8 @@
 # PG-Life
 PG Life Website – Student Accommodation Platform 🏘️ 
 <br>
-A responsive web application designed to help students easily search and compare PG accommodations 🏘️ based on location, amenities, pricing, and reviews. 
+A responsive web application designed to help students easily search and compare PG accommodations 🏘️ based on location, amenities, pricing, and reviews.
+<br> 
 Built with PHP, MySQL, HTML, CSS, Bootstrap & JS. 
 Seamlessly optimized for mobile, tablet, and desktop users 📱.
 
