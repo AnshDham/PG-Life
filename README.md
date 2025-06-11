@@ -5,7 +5,9 @@ A responsive web application designed to help students easily search and compare
 <br> 
 Built with modern web technologies this site ensures seamless performance across desktops, tablets, and mobile devices📱.
 
-🛠️ Tech Stack: HTML, CSS, Bootstrap, MySQL, DBMS, PHP, JavaScript & React 🌐
+🛠️ Tech Stack: HTML, CSS, Bootstrap, MySQL, DBMS, PHP, JavaScript & React 🛠️
+
+🌐 Features :
 
 🎯 Search and filter PG listings by city and preferences
 
