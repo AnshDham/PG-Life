@@ -1,7 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
-// import cors from 'cors';
+import cors from 'cors';
 import db from './libs/db.libs.js'
+
+
+// Routes
+
+import authRoutes from './routes/auth.routes.js';
 
 // Load environment variables from .env file
 
@@ -10,16 +15,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors(
+  {
+    origin: process.env.CORS_ORIGIN || '*', // Allow all origins by default, or specify a specific origin
+    methods: process.env.CORS_METHODS || 'GET, POST, PUT, DELETE', // Allowed HTTP methods
+    credentials: process.env.CORS_CREDENTIALS || true, // Allow credentials (cookies, authorization headers, etc.)
+  }
+));
+app.use(express.json());
+
+
 
 app.get('/', (req, res) => {
   res.send('Welcome to PG LIFE');
-})
-
-app.use((req, res ) => {
-    res.status(404).json({
-        message: 'Route Not Found',
-        status: 404
-    });
 })
 
 // database connection
@@ -30,6 +38,22 @@ app.use((req, res ) => {
  .catch((error) => {
   console.error('Database connection failed:', error);
  })
+
+
+
+// Use routes
+app.use('/api/v1/auth', authRoutes);
+
+
+
+// Handle 404 errors for undefined routes
+app.use((req, res ) => {
+    res.status(404).json({
+        message: 'Route Not Found',
+        status: 404
+    });
+})
+
 
 // Start the server
 app.listen(process.env.PORT || PORT, () => {
