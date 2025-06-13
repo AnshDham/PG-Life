@@ -1,7 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 // import cors from 'cors';
-// import cookieParser from 'cookie-parser';
+import db from './libs/db.libs.js'
+
+// Load environment variables from .env file
 
 dotenv.config();
 
@@ -20,6 +22,16 @@ app.use((req, res ) => {
     });
 })
 
+// database connection
+ db()
+ .then(() => {
+  console.log('Database connected successfully');
+ })
+ .catch((error) => {
+  console.error('Database connection failed:', error);
+ })
+
+// Start the server
 app.listen(process.env.PORT || PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 })
