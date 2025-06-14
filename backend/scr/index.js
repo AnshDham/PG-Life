@@ -1,7 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import db from './libs/db.libs.js'
+import db from './libs/db.libs.js';
+import cookieParser from 'cookie-parser';
 
 
 // Routes
@@ -23,6 +24,8 @@ app.use(cors(
   }
 ));
 app.use(express.json());
+app.use(cookieParser()); // Middleware to parse cookies
+
 
 
 
