@@ -16,13 +16,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors(
-  {
-    origin: process.env.CORS_ORIGIN || '*', // Allow all origins by default, or specify a specific origin
-    methods: process.env.CORS_METHODS || 'GET, POST, PUT, DELETE', // Allowed HTTP methods
-    credentials: process.env.CORS_CREDENTIALS || true, // Allow credentials (cookies, authorization headers, etc.)
-  }
-));
+app.use(cors({
+  origin: (origin, callback) => callback(null, true),
+  credentials: true
+}))
+
 app.use(express.json());
 app.use(cookieParser()); // Middleware to parse cookies
 

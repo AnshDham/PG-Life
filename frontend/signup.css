@@ -1,0 +1,73 @@
+/* signup.css */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to left, #ffd9e1, #ffb6c1);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: slideIn 1.5s ease-in-out;
+}
+
+.signup-container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.35);
+    width: 90%;
+    max-width: 500px;
+    transition: box-shadow 0.3s ease;
+}
+
+.signup-container:hover {
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+}
+
+h2 {
+    text-align: center;
+    color: #c94b8c;
+    margin-bottom: 1.5rem;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 1rem;
+    border: 1px solid #f7b5c9;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus {
+    border-color: #c94b8c;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: #c94b8c;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #de6fa4;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 600px) {
+    .signup-container {
+        padding: 1.8rem;
+    }
+}
