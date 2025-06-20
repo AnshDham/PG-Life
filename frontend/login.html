@@ -1,49 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="login.css">
-  <title>Login</title>
+    <meta charset="UTF-8">
+    <title>Login - PG Life</title>
+    <link rel="stylesheet" href="login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h2>Login</h2>
-  <form id="login-form">
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-  </form>
+    <div class="background-text">PG Life</div>
 
-  <p id="message"></p>
-  <p>Don't have an account? <a href="signup.html">Register Here</a></p>
+    <div class="login-container">
+        <h2>Login</h2>
 
-  <script>
-    document.getElementById("login-form").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const form = e.target;
+        <form>
+            <input type="text" placeholder="Full Name" required>
+            <input type="email" placeholder="Gmail" required>
+            <input type="password" placeholder="Password" required>
 
-      const response = await fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email.value,
-          password: form.password.value
-        }),
-        credentials: "include"
-      });
+            <button type="submit">Login</button>
 
-      const result = await response.json();
-      const msg = document.getElementById("message");
-      msg.textContent = result.message;
-
-      if (response.status === 200) {
-        // Redirect to dashboard or homepage after login
-        setTimeout(() => {
-          window.location.href = "dashboard.html"; // replace with actual page
-        }, 1500);
-      }
-    });
-  </script>
-  <script src="login.js"></script>
-
+            <p class="bottom-text">Don’t have an account? <a href="#">Sign up</a></p>
+        </form>
+    </div>
 </body>
 </html>
