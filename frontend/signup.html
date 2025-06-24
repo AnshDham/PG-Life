@@ -1,47 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sign Up</title>
+  <meta charset="UTF-8" />
+  <title>Signup | PG Life</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap + FontAwesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
-  <h2>Signup</h2>
-  <form id="signup-form">
-    <input type="text" name="name" placeholder="Full Name" required><br>
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Sign Up</button>
-  </form>
 
-  <p id="message"></p>
-  <p>Already have an account? <a href="login.html">Go to Login</a></p>
+  <div class="container mt-5">
+    <div class="modal-dialog">
+      <div class="modal-content p-4">
+        <div class="modal-header">
+          <h5 class="modal-title">Signup with PG Life</h5>
+        </div>
+
+        <div class="modal-body">
+          <form id="signup-form">
+            <div class="input-group form-group">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user"></i></span></div>
+              <input type="text" class="form-control" name="full_name" placeholder="Full Name" maxlength="30" required />
+            </div>
+
+            <div class="input-group form-group">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-phone-alt"></i></span></div>
+              <input type="text" class="form-control" name="phone" placeholder="Phone Number" maxlength="10" minlength="10" required />
+            </div>
+
+            <div class="input-group form-group">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-envelope"></i></span></div>
+              <input type="email" class="form-control" name="email" placeholder="Email" required />
+            </div>
+
+            <div class="input-group form-group">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
+              <input type="password" class="form-control" name="password" placeholder="Password" minlength="8" required />
+            </div>
+
+            <div class="input-group form-group">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-university"></i></span></div>
+              <input type="text" class="form-control" name="college_name" placeholder="College Name" maxlength="150" required />
+            </div>
+
+            <div class="form-group">
+              <span>I'm a</span>
+              <input type="radio" class="ml-3" id="gender-male" name="gender" value="male" required />
+              <label for="gender-male">Male</label>
+              <input type="radio" class="ml-3" id="gender-female" name="gender" value="female" required />
+              <label for="gender-female">Female</label>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" class="btn btn-block btn-primary">Create Account</button>
+            </div>
+            <p id="signup-message" class="text-danger text-center"></p>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <span>Already have an account?
+            <a href="login.html">Login</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    document.getElementById("signup-form").addEventListener("submit", async function(e) {
+    document.getElementById("signup-form").addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const form = e.target;
+      const messageBox = document.getElementById("signup-message");
 
-      const response = await fetch("/api/v1/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name.value,
-          email: form.email.value,
-          password: form.password.value
-        }),
-        credentials: "include"
-      });
+      const payload = {
+        name: form.full_name.value,
+        email: form.email.value,
+        password: form.password.value,
+        // Additional fields (not yet stored in backend schema but collected):
+        phone: form.phone.value,
+        college: form.college_name.value,
+        gender: form.gender.value
+      };
 
-      const result = await response.json();
-      const msg = document.getElementById("message");
-      msg.textContent = result.message;
+      try {
+        const res = await fetch("/api/v1/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload)
+        });
 
-      if (response.status === 201) {
-        setTimeout(() => {
-          window.location.href = "login.html"; // Redirect to login after successful signup
-        }, 1500);
+        const result = await res.json();
+
+        if (res.status === 201) {
+          messageBox.style.color = "green";
+          messageBox.textContent = "Signup successful! Redirecting to login...";
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 1500);
+        } else {
+          messageBox.style.color = "red";
+          messageBox.textContent = result.message || "Signup failed!";
+        }
+      } catch (error) {
+        console.error(error);
+        messageBox.style.color = "red";
+        messageBox.textContent = "Something went wrong. Try again.";
       }
     });
   </script>
+
 </body>
 </html>

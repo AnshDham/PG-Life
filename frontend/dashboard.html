@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard | PG Life</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="css/dashboard.css" rel="stylesheet" />
+  <!-- Include FontAwesome and Bootstrap if used -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+</head>
+<body>
+  <!-- Header can be included here manually -->
+  <header>
+    <h2>PG Life</h2>
+    <button onclick="logout()">Logout</button>
+  </header>
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb py-2">
+      <li class="breadcrumb-item"><a href="home.html">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    </ol>
+  </nav>
+
+  <div class="my-profile page-container">
+    <h1>My Profile</h1>
+    <div class="row">
+      <div class="col-md-3 profile-img-container">
+        <i class="fas fa-user profile-img"></i>
+      </div>
+      <div class="col-md-9">
+        <div class="row no-gutters justify-content-between align-items-end">
+          <div class="profile">
+            <div class="name" id="name"></div>
+            <div class="email" id="email"></div>
+            <div class="phone" id="phone"></div>
+            <div class="college" id="college"></div>
+          </div>
+          <div class="edit">
+            <div class="edit-profile">Edit Profile</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="my-interested-properties">
+    <div class="page-container">
+      <h1>My Interested Properties</h1>
+      <div id="properties-container"></div>
+    </div>
+  </div>
+
+  <!-- Footer can be included here manually -->
+  <footer>
+    <p>© 2025 PG Life</p>
+  </footer>
+
+  <script>
+    async function fetchDashboardData() {
+      try {
+        const userRes = await fetch('/api/v1/auth/check', {
+          credentials: 'include'
+        });
+        const userData = await userRes.json();
+
+        if (userRes.status !== 200) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        document.getElementById('name').textContent = userData.user.name;
+        document.getElementById('email').textContent = userData.user.email;
+        document.getElementById('phone').textContent = 'Phone: Not available';
+        document.getElementById('college').textContent = 'College: Not available';
+
+        // Mock data for interested properties (replace with real API later)
+        const properties = [
+          {
+            id: 1,
+            name: 'Royal PG',
+            address: 'Near City Center',
+            gender: 'male',
+            rent: 8500,
+            image: 'img/properties/1/room1.jpg',
+            rating_clean: 4.5,
+            rating_food: 4.2,
+            rating_safety: 4.7
+          }
+        ];
+
+        const container = document.getElementById('properties-container');
+        properties.forEach(property => {
+          const rating = Math.round(((property.rating_clean + property.rating_food + property.rating_safety) / 3) * 10) / 10;
+          container.innerHTML += `
+            <div class="property-card property-id-${property.id} row">
+              <div class="image-container col-md-4">
+                <img src="${property.image}" />
+              </div>
+              <div class="content-container col-md-8">
+                <div class="row no-gutters justify-content-between">
+                  <div class="star-container" title="${rating}">
+                    ${getStars(rating)}
+                  </div>
+                  <div class="interested-container">
+                    <i class="is-interested-image fas fa-heart" property_id="${property.id}"></i>
+                  </div>
+                </div>
+                <div class="detail-container">
+                  <div class="property-name">${property.name}</div>
+                  <div class="property-address">${property.address}</div>
+                  <div class="property-gender">
+                    <img src="img/${property.gender}.png">
+                  </div>
+                </div>
+                <div class="row no-gutters">
+                  <div class="rent-container col-6">
+                    <div class="rent">₹ ${property.rent.toLocaleString()}/-</div>
+                    <div class="rent-unit">per month</div>
+                  </div>
+                  <div class="button-container col-6">
+                    <a href="property_detail.html?property_id=${property.id}" class="btn btn-primary">View</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+      } catch (err) {
+        console.error(err);
+        window.location.href = 'login.html';
+      }
+    }
+
+    function getStars(rating) {
+      let stars = '';
+      for (let i = 0; i < 5; i++) {
+        if (rating >= i + 0.8) {
+          stars += '<i class="fas fa-star"></i>';
+        } else if (rating >= i + 0.3) {
+          stars += '<i class="fas fa-star-half-alt"></i>';
+        } else {
+          stars += '<i class="far fa-star"></i>';
+        }
+      }
+      return stars;
+    }
+
+    async function logout() {
+      await fetch('/api/v1/auth/logout', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      window.location.href = 'login.html';
+    }
+
+    fetchDashboardData();
+  </script>
+</body>
+</html>
