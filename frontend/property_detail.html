@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Property Details | PG Life</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/property_detail.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+</head>
+<body>
+
+  <!-- Simple header -->
+  <header class="bg-light p-3 d-flex justify-content-between">
+    <h3 class="m-0">PG Life</h3>
+    <a href="index.html">Back to Home</a>
+  </header>
+
+  <div id="property-details" class="page-container">
+    <div class="text-center my-5">Loading property details...</div>
+  </div>
+
+  <script>
+    const container = document.getElementById("property-details");
+    const params = new URLSearchParams(window.location.search);
+    const propertyId = params.get("property_id");
+
+    if (!propertyId) {
+      container.innerHTML = "<p>Invalid property ID</p>";
+    } else {
+      fetch(`/api/v1/properties/${propertyId}`, {
+        credentials: 'include'
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.property) {
+            const p = data.property;
+            const rating = ((p.rating_clean + p.rating_food + p.rating_safety) / 3).toFixed(1);
+
+            const genderIcon = p.gender === "male" ? "male.png"
+                              : p.gender === "female" ? "female.png"
+                              : "unisex.png";
+
+            const amenitiesHTML = (type) =>
+              p.amenities
+                .filter(a => a.type === type)
+                .map(a => `
+                  <div class="amenity-container">
+                    <img src="img/amenities/${a.icon}.svg" />
+                    <span>${a.name}</span>
+                  </div>
+                `).join("");
+
+            const testimonialsHTML = p.testimonials.map(t => `
+              <div class="testimonial-block">
+                <div class="testimonial-image-container">
+                  <img class="testimonial-img" src="img/man.png" />
+                </div>
+                <div class="testimonial-text">
+                  <i class="fa fa-quote-left" aria-hidden="true"></i>
+                  <p>${t.content}</p>
+                </div>
+                <div class="testimonial-name">- ${t.user_name}</div>
+              </div>
+            `).join("");
+
+            container.innerHTML = `
+              <div class="property-summary">
+                <div class="row justify-content-between">
+                  <div class="star-container" title="${rating}">
+                    ${getStars(rating)}
+                  </div>
+                  <div class="interested-container">
+                    <i class="is-interested-image ${p.is_interested ? "fas" : "far"} fa-heart"></i>
+                    <div class="interested-text">
+                      <span class="interested-user-count">${p.interested_count}</span> interested
+                    </div>
+                  </div>
+                </div>
+
+                <div class="detail-container">
+                  <div class="property-name">${p.name}</div>
+                  <div class="property-address">${p.address}</div>
+                  <div class="property-gender">
+                    <img src="img/${genderIcon}" />
+                  </div>
+                </div>
+
+                <div class="row no-gutters">
+                  <div class="rent-container col-6">
+                    <div class="rent">₹ ${p.rent.toLocaleString()}/-</div>
+                    <div class="rent-unit">per month</div>
+                  </div>
+                  <div class="button-container col-6">
+                    <a href="#" class="btn btn-primary">Book Now</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-amenities">
+                <h1>Amenities</h1>
+                <div class="row">
+                  <div class="col-md-auto"><h5>Building</h5>${amenitiesHTML("Building")}</div>
+                  <div class="col-md-auto"><h5>Common Area</h5>${amenitiesHTML("Common Area")}</div>
+                  <div class="col-md-auto"><h5>Bedroom</h5>${amenitiesHTML("Bedroom")}</div>
+                  <div class="col-md-auto"><h5>Washroom</h5>${amenitiesHTML("Washroom")}</div>
+                </div>
+              </div>
+
+              <div class="property-about">
+                <h1>About the Property</h1>
+                <p>${p.description}</p>
+              </div>
+
+              <div class="property-rating">
+                <h1>Property Rating</h1>
+                <div class="rating-criteria">
+                  <strong>Cleanliness:</strong> ${getStars(p.rating_clean)}
+                </div>
+                <div class="rating-criteria">
+                  <strong>Food Quality:</strong> ${getStars(p.rating_food)}
+                </div>
+                <div class="rating-criteria">
+                  <strong>Safety:</strong> ${getStars(p.rating_safety)}
+                </div>
+              </div>
+
+              <div class="property-testimonials">
+                <h1>What People Say</h1>
+                ${testimonialsHTML}
+              </div>
+            `;
+          } else {
+            container.innerHTML = "<p>Property not found.</p>";
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          container.innerHTML = "<p>Something went wrong loading the property.</p>";
+        });
+    }
+
+    function getStars(rating) {
+      rating = parseFloat(rating);
+      let html = "";
+      for (let i = 0; i < 5; i++) {
+        if (rating >= i + 0.8) {
+          html += '<i class="fas fa-star"></i>';
+        } else if (rating >= i + 0.3) {
+          html += '<i class="fas fa-star-half-alt"></i>';
+        } else {
+          html += '<i class="far fa-star"></i>';
+        }
+      }
+      return html;
+    }
+  </script>
+
+</body>
+</html>
