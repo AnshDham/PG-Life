@@ -66,7 +66,7 @@
         });
 
         const result = await res.json();
-        if (res.status === 200) {
+        if (res.status === 200 && result.success) {
           messageBox.style.color = "green";
           messageBox.textContent = "Login successful! Redirecting...";
           setTimeout(() => {
