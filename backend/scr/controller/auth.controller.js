@@ -5,8 +5,8 @@ import User from '../model/User.model.js';
 
 export const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-        if (!name || !email || !password) {
+        const { name, email, password, phoneNumber, collegeName } = req.body;
+        if (!name || !email || !password || !phoneNumber || !collegeName) {
             return res.status(400).json({ message: 'All fields are required' });
         }
         // Check if email is valid
@@ -21,6 +21,12 @@ export const register = async (req, res) => {
         if (!passwordRegex.test(password)) {
             return res.status(400).json({ message: 'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number' });
         }
+        // Check if phone number is valid
+        const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+        if (!phoneRegex.test(phoneNumber)) {
+            return res.status(400).json({ message: 'Invalid phone number format' });
+        }
+
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,7 +39,7 @@ export const register = async (req, res) => {
 
 
         // Create user
-        const user = await User.create({ name, email, password: hashedPassword });
+        const user = await User.create({ name, email, password: hashedPassword, phoneNumber, collegeName });
 
 
         // Save user
@@ -47,7 +53,7 @@ export const register = async (req, res) => {
 
 
         // Generate JWT
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
+        const token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name, phoneNumber: user.phoneNumber, collegeName: user.collegeName }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
 
         // Set token in cookie
         res.cookie('token', token, {
@@ -58,7 +64,17 @@ export const register = async (req, res) => {
         })
 
         // Return success response
-        res.status(201).json({ message: 'User registered successfully', user: { id: user._id, name: user.name, email: user.email } });
+        res.status(201).json({
+             message: 'User registered successfully', 
+             user: { 
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                phoneNumber: user.phoneNumber,
+                collegeName: user.collegeName
+             } 
+            });
 
     } catch (error) {
         console.error('Error during registration:', error);
@@ -70,9 +86,12 @@ export const login = async (req, res) => {
     try {
         const {email, password} = req.body
 
+
         if (!email || !password) {
             return res.status(400).json({ message: 'Email and password are required' });
         }
+
+
         // Check if email is valid
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -93,24 +112,28 @@ export const login = async (req, res) => {
         }
 
         // Generate JWT
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
+        const token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name, phoneNumber: user.phoneNumber, collegeName: user.collegeName}, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
         // Set token in cookie
         res.cookie('token', token, {
             httpOnly:true, 
             secure:false,
             sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000,
+            path: '/' // Ensure the cookie is accessible across the application
         })
 
         // Return success response
 
         res.status(200).json({
             message: 'Login successful',
+            success: true,
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                phoneNumber: user.phoneNumber,
+                collegeName: user.collegeName,
             }
         });
 
@@ -142,6 +165,7 @@ export const check = async (req, res ) => {
         if (!req.user) {
             return res.status(401).json({ message: 'User is not authenticated' });
         }
+        console.log('User is authenticated:', req.user);
         // If user is authenticated, return user details
         res.status(200).json({
             message: 'User is authenticated',
@@ -149,7 +173,9 @@ export const check = async (req, res ) => {
                 id: req.user._id,
                 name: req.user.name,
                 email: req.user.email,
-                role: req.user.role
+                role: req.user.role,
+                phoneNumber: req.user.phoneNumber,
+                collegeName: req.user.collegeName,
             }
         });
     } catch (error) {
