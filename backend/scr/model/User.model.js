@@ -22,6 +22,17 @@ const UserSchema = new mongoose.Schema({
         enum: ["admin", "user"],
         default: "user"
     },
+    collegeName:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    phoneNumber:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    faverateProperties:[],
     isVerified:{
         type: Boolean,
         default: false
