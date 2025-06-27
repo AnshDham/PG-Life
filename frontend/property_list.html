@@ -26,6 +26,25 @@
           <li class="breadcrumb-item active" id="breadcrumb-city" aria-current="page">City</li>
         </ol>
       </nav>
+
+      <div class="page-container">
+        <div class="filter-bar row justify-content-around">
+          <div class="col-auto" data-toggle="modal" data-target="#filter-modal">
+            <img src="img/filter.png" alt="filter" />
+            <span>Filter</span>
+          </div>
+          <div class="col-auto">
+            <img src="img/desc.png" alt="sort-desc" />
+            <span>Highest rent first</span>
+          </div>
+          <div class="col-auto">
+            <img src="img/asc.png" alt="sort-asc" />
+            <span>Lowest rent first</span>
+          </div>
+        </div>
+    
+        <div id="property-list" class="mt-4"></div>
+      </div>
       
 </body>
 </html>    
