@@ -1,0 +1,48 @@
+<!-- header.html -->
+<header class="bg-light shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center py-3">
+    <a href="index.html" class="navbar-brand font-weight-bold h4 m-0">PG Life</a>
+
+    <div id="header-links" class="d-flex gap-3 align-items-center">
+      <!-- Login/Signup or Dashboard/Logout will be inserted here via JS -->
+    </div>
+  </div>
+</header>
+
+<script>
+  async function updateHeaderLinks() {
+    const headerLinks = document.getElementById("header-links");
+
+    try {
+      const res = await fetch("/api/v1/auth/check", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data?.success) {
+        // Authenticated user
+        headerLinks.innerHTML = `
+          <span class="mr-3">Welcome, ${data.user.name}</span>
+          <a href="dashboard.html" class="btn btn-outline-primary">Dashboard</a>
+          <a href="logout.html" class="btn btn-danger ml-2">Logout</a>
+        `;
+      } else {
+        // Guest
+        headerLinks.innerHTML = `
+          <a href="login.html" class="btn btn-outline-primary">Login</a>
+          <a href="signup.html" class="btn btn-primary ml-2">Signup</a>
+        `;
+      }
+    } catch (error) {
+      console.error("Header auth check failed:", error);
+      headerLinks.innerHTML = `
+        <a href="login.html" class="btn btn-outline-primary">Login</a>
+        <a href="signup.html" class="btn btn-primary ml-2">Signup</a>
+      `;
+    }
+  }
+
+  updateHeaderLinks();
+</script>
