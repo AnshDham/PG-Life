@@ -77,7 +77,26 @@
       
       <footer class="text-center bg-light p-3 mt-5">
         <p>&copy; 2025 PG Life</p>
-      </footer>    
+      </footer>
+      
+      <script>
+        const city = new URLSearchParams(window.location.search).get("city");
+        const container = document.getElementById("property-list");
+        document.getElementById("breadcrumb-city").textContent = city || "City";
+    
+        if (!city) {
+          container.innerHTML = "<p>City not specified in the URL.</p>";
+        } else {
+          fetch(`/api/v1/properties?city=${encodeURIComponent(city)}`, {
+            credentials: "include"
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (!data || !Array.isArray(data.properties) || data.properties.length === 0) {
+                container.innerHTML = "<p>No PGs to list in this city.</p>";
+                return;
+              }
+      </script>        
       
 </body>
 </html>    
