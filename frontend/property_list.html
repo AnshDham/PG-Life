@@ -72,4 +72,76 @@
       </div>
     </div>
   </div>
-  
+ 
+  <footer class="text-center bg-light p-3 mt-5">
+    <p>&copy; 2025 PG Life</p>
+  </footer>
+
+  <script>
+    const city = new URLSearchParams(window.location.search).get("city");
+    const container = document.getElementById("property-list");
+    document.getElementById("breadcrumb-city").textContent = city || "City";
+
+    if (!city) {
+      container.innerHTML = "<p>City not specified in the URL.</p>";
+    } else {
+      fetch(`/api/v1/properties?city=${encodeURIComponent(city)}`, {
+        credentials: "include"
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (!data || !Array.isArray(data.properties) || data.properties.length === 0) {
+            container.innerHTML = "<p>No PGs to list in this city.</p>";
+            return;
+          }
+
+          data.properties.forEach(p => {
+            const rating = ((p.rating_clean + p.rating_food + p.rating_safety) / 3).toFixed(1);
+            const isInterested = p.is_interested;
+            const imageUrl = `img/properties/${p._id}/${p.images?.[0] || 'room1.jpg'}`;
+
+            container.innerHTML += `
+              <div class="property-card property-id-${p._id} row mb-4">
+                <div class="image-container col-md-4">
+                  <img src="${imageUrl}" alt="${p.name}" />
+                </div>
+                <div class="content-container col-md-8">
+                  <div class="row no-gutters justify-content-between">
+                    <div class="star-container" title="${rating}">
+                      ${getStars(rating)}
+                    </div>
+                    <div class="interested-container">
+                      <i class="is-interested-image ${isInterested ? "fas" : "far"} fa-heart" property_id="${p._id}"></i>
+                      <div class="interested-text">
+                        <span class="interested-user-count">${p.interested_count || 0}</span> interested
+                      </div>
+                    </div>
+                  </div>
+                  <div class="detail-container">
+                    <div class="property-name">${p.name}</div>
+                    <div class="property-address">${p.address}</div>
+                    <div class="property-gender">
+                      <img src="img/${p.gender}.png" />
+                    </div>
+                  </div>
+                  <div class="row no-gutters">
+                    <div class="rent-container col-6">
+                      <div class="rent">₹ ${p.rent.toLocaleString()}/-</div>
+                      <div class="rent-unit">per month</div>
+                    </div>
+                    <div class="button-container col-6">
+                      <a href="property_detail.html?property_id=${p._id}" class="btn btn-primary">View</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          container.innerHTML = "<p>Error loading properties.</p>";
+        });
+    }
+
+   
