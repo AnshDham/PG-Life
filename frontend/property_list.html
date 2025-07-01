@@ -144,4 +144,19 @@
         });
     }
 
+    function getStars(rating) {
+      rating = parseFloat(rating);
+      let stars = "";
+      for (let i = 0; i < 5; i++) {
+        if (rating >= i + 0.8) stars += '<i class="fas fa-star"></i>';
+        else if (rating >= i + 0.3) stars += '<i class="fas fa-star-half-alt"></i>';
+        else stars += '<i class="far fa-star"></i>';
+      }
+      return stars;
+    }
+  </script>
+
+</body>
+</html>
+
    
