@@ -62,3 +62,29 @@ input[type="radio"] {
   position: relative;
   top: 1px;
 }
+
+/* === Breadcrumb === */
+.breadcrumb {
+  background-color: #e5e3e8;
+  font-size: 13px;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+/* === Container Defaults === */
+.container {
+  max-width: 920px;
+  padding: 0 20px;
+}
+
+.page-container {
+  max-width: 800px;
+  padding: 80px 24px;
+  margin: auto;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 64px 24px;
+  }
+}
