@@ -139,3 +139,51 @@ input[type="radio"] {
   font-weight: bold;
   margin: auto 16px;
 }
+
+/* === Footer === */
+.footer {
+  background-color: #333;
+  color: #fff;
+  font-size: 13px;
+}
+
+.footer-container {
+  padding: 32px 16px;
+}
+
+.footer-cities {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.footer-city {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.footer-city a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-city a:hover {
+  text-decoration: underline;
+}
+
+.footer-copyright {
+  color: #a9a9a9;
+  text-align: center;
+  padding-top: 24px;
+}
+
+/* === Modal (login/signup) === */
+.modal-footer {
+  background-color: #f4f4f4;
+  justify-content: center;
+}
+
+#login-modal .modal-dialog {
+  max-width: 400px;
+  margin: auto;
+}
