@@ -1,0 +1,40 @@
+/* === Base === */
+* {
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  color: #373737;
+  font-size: 16px;
+  position: relative;
+  background-color: #f9f9f9;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 28px;
+  }
+}
+
+h3 {
+  font-size: 24px;
+}
+
+h5 {
+  font-size: 16px;
+}
+
+.white {
+  color: #ffffff;
+}
