@@ -38,3 +38,27 @@ h5 {
 .white {
   color: #ffffff;
 }
+
+/* === Buttons === */
+.btn-primary,
+.btn-warning,
+.btn-danger {
+  color: white;
+  font-weight: bold;
+}
+
+.btn-primary:hover,
+.btn-warning:hover,
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+/* === Input Group Icons === */
+.input-group .input-group-text i {
+  width: 14px;
+}
+
+input[type="radio"] {
+  position: relative;
+  top: 1px;
+}
