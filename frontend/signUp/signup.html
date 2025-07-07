@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signup | PG Life</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-xl">
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold text-blue-600">Signup for PG Life</h2>
+    </div>
+
+    <form id="signup-form" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Full Name</label>
+        <div class="flex items-center border rounded px-3 py-2">
+          <i class="fas fa-user text-gray-400 mr-2"></i>
+          <input type="text" name="full_name" class="w-full focus:outline-none" placeholder="Your full name" maxlength="30" required />
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Phone Number</label>
+        <div class="flex items-center border rounded px-3 py-2">
+          <i class="fas fa-phone-alt text-gray-400 mr-2"></i>
+          <input type="text" name="phone" class="w-full focus:outline-none" placeholder="10-digit number" maxlength="10" minlength="10" required />
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Email</label>
+        <div class="flex items-center border rounded px-3 py-2">
+          <i class="fas fa-envelope text-gray-400 mr-2"></i>
+          <input type="email" name="email" class="w-full focus:outline-none" placeholder="Enter your email" required />
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Password</label>
+        <div class="flex items-center border rounded px-3 py-2">
+          <i class="fas fa-lock text-gray-400 mr-2"></i>
+          <input type="password" name="password" class="w-full focus:outline-none" placeholder="Minimum 8 characters" minlength="8" required />
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">College Name</label>
+        <div class="flex items-center border rounded px-3 py-2">
+          <i class="fas fa-university text-gray-400 mr-2"></i>
+          <input type="text" name="college_name" class="w-full focus:outline-none" placeholder="Your college" maxlength="150" required />
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <span class="block mb-2 font-medium text-gray-700">I'm a:</span>
+        <label class="mr-4">
+          <input type="radio" name="gender" value="male" required class="mr-1" /> Male
+        </label>
+        <label>
+          <input type="radio" name="gender" value="female" required class="mr-1" /> Female
+        </label>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Create Account</button>
+      </div>
+
+      <p id="signup-message" class="text-center text-sm"></p>
+    </form>
+
+    <div class="text-center mt-4 text-sm">
+      Already have an account?
+      <a href="../Login/login.html" class="text-blue-600 hover:underline">Login here</a>
+    </div>
+  </div>
+
+  <script>
+      const BASE_URL = 'https://pg-life-backend-1.onrender.com'
+
+    document.getElementById("signup-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const messageBox = document.getElementById("signup-message");
+
+      const payload = {
+        name: form.full_name.value,
+        email: form.email.value,
+        password: form.password.value,
+        phoneNumber: form.phone.value,
+        collegeName: form.college_name.value,
+        gender: form.gender.value
+      };
+
+
+      try {
+        const res = await fetch(`${BASE_URL}/api/v1/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+
+        if (res.status === 201) {
+          messageBox.style.color = "green";
+          messageBox.textContent = "Signup successful! Redirecting to login...";
+          setTimeout(() => {
+            window.location.href = "../login/login.html";
+          }, 1500);
+        } else {
+          messageBox.style.color = "red";
+          messageBox.textContent = result.message || "Signup failed!";
+        }
+      } catch (error) {
+        console.error("Signup Error:", error);
+        messageBox.style.color = "red";
+        messageBox.textContent = "Something went wrong. Try again.";
+      }
+    });
+  </script>
+
+</body>
+</html>

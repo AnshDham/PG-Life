@@ -1,14 +1,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import db from './libs/db.libs.js';
+import db from './scr/libs/db.libs.js';
 import cookieParser from 'cookie-parser';
 
 
 // Routes
 
-import authRoutes from './routes/auth.routes.js';
-import propertyRoutes from './routes/Property.routes.js';
+import authRoutes from './scr/routes/auth.routes.js';
+import propertyRoutes from './scr/routes/property.routes.js';
 
 // Load environment variables from .env file
 
@@ -24,11 +24,39 @@ const PORT = process.env.PORT || 3000;
 //     credentials:  true, // Allow credentials (cookies, authorization headers, etc.)
 //   }
 // ));
+
+
 app.use(cors({
   origin: (origin, callback) => callback(null, true),
   credentials: true,
 }))
+
+
 // app.use(cors())
+
+// _________________________________________________
+// const allowedOrigins = [
+//   'http://localhost:3000',
+//   'http://127.0.0.1:56197',
+//   'http://localhost:3001',
+//   'http://localhost:3000/api/v1/auth/check',
+//   'http://localhost:56197',
+//   'http://localhost:56197/frontend/profile/profile.html', // Add more as needed
+// ];
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (like mobile apps, curl)
+//     if (!origin) return callback(null, true);
+//     if (allowedOrigins.includes(origin)) {
+//       return callback(null, true);
+//     } else {
+//       return callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+// }));
+
 app.use(express.json());
 app.use(cookieParser()); // Middleware to parse cookies
 

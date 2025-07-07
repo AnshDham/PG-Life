@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login | PG Life</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold text-blue-600">Login to PG Life</h2>
+    </div>
+
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Email</label>
+        <div class="flex items-center border rounded px-3 py-2">
+          <i class="fas fa-user text-gray-400 mr-2"></i>
+          <input type="email" name="email" class="w-full focus:outline-none" placeholder="Enter your email" required />
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Password</label>
+        <div class="flex items-center border rounded px-3 py-2">
+          <i class="fas fa-lock text-gray-400 mr-2"></i>
+          <input type="password" name="password" class="w-full focus:outline-none" placeholder="Enter your password" minlength="6" required />
+        </div>
+      </div>
+
+      <div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Login</button>
+      </div>
+      <p id="login-message" class="text-center text-sm"></p>
+    </form>
+
+    <div class="text-center mt-4 text-sm">
+      <span>Don't have an account?</span>
+      <a href="../signUp/signup.html" class="text-blue-600 hover:underline">Click here to register</a>
+    </div>
+  </div>
+
+  <script>
+      const BASE_URL = 'https://pg-life-backend-1.onrender.com'
+
+    document.getElementById("login-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const email = this.email.value;
+      const password = this.password.value;
+      const messageBox = document.getElementById("login-message");
+
+      try {
+        const res = await fetch(`${BASE_URL}/api/v1/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // for sending cookies
+          body: JSON.stringify({ email, password }),
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          messageBox.style.color = "green";
+          messageBox.textContent = "Login successful! Redirecting...";
+          setTimeout(() => {
+            window.location.href = "../home/home.html";
+          }, 1500);
+        } else {
+          messageBox.style.color = "red";
+          messageBox.textContent = result.message || "Login failed.";
+        }
+      } catch (error) {
+        messageBox.style.color = "red";
+        messageBox.textContent = "An error occurred. Please try again.";
+        console.error("Login Error:", error);
+      }
+    });
+  </script>
+
+</body>
+</html>

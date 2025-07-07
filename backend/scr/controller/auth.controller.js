@@ -5,8 +5,8 @@ import User from '../model/User.model.js';
 
 export const register = async (req, res) => {
     try {
-        const { name, email, password, phoneNumber, collegeName } = req.body;
-        if (!name || !email || !password || !phoneNumber || !collegeName) {
+        const { name, email, password, phoneNumber, collegeName, gender } = req.body;
+        if (!name || !email || !password || !phoneNumber || !collegeName || !gender) {
             return res.status(400).json({ message: 'All fields are required' });
         }
         // Check if email is valid
@@ -39,7 +39,7 @@ export const register = async (req, res) => {
 
 
         // Create user
-        const user = await User.create({ name, email, password: hashedPassword, phoneNumber, collegeName });
+        const user = await User.create({ name, email, password: hashedPassword, phoneNumber, collegeName, gender });
 
 
         // Save user
@@ -53,14 +53,15 @@ export const register = async (req, res) => {
 
 
         // Generate JWT
-        const token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name, phoneNumber: user.phoneNumber, collegeName: user.collegeName }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
+        const token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name, phoneNumber: user.phoneNumber, collegeName: user.collegeName, gender: user.gender }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
 
         // Set token in cookie
         res.cookie('token', token, {
-            httpOnly: true,      // Prevents JS access to the cookie (XSS protection)
-            secure: false,       // Set to true if using HTTPS
-            sameSite: "lax",     // CSRF protection
-            maxAge: 24 * 60 * 60 * 1000 // 1 day in milliseconds
+            httpOnly:true, 
+            secure:true, // required for cross-site cookies over HTTPS
+            sameSite: 'none', // required when frontend & backend are on different domains
+            maxAge: 24 * 60 * 60 * 1000,
+            path: '/' // Ensure the cookie is accessible across the application
         })
 
         // Return success response
@@ -72,7 +73,8 @@ export const register = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 phoneNumber: user.phoneNumber,
-                collegeName: user.collegeName
+                collegeName: user.collegeName,
+                gender: user.gender
              } 
             });
 
@@ -112,12 +114,12 @@ export const login = async (req, res) => {
         }
 
         // Generate JWT
-        const token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name, phoneNumber: user.phoneNumber, collegeName: user.collegeName}, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
+        const token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name, phoneNumber: user.phoneNumber, collegeName: user.collegeName, gender: user.gender }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION || '1h' });
         // Set token in cookie
         res.cookie('token', token, {
             httpOnly:true, 
-            secure:false,
-            sameSite: 'lax',
+            secure:true, // required for cross-site cookies over HTTPS
+            sameSite: 'none', // required when frontend & backend are on different domains
             maxAge: 24 * 60 * 60 * 1000,
             path: '/' // Ensure the cookie is accessible across the application
         })
@@ -134,6 +136,7 @@ export const login = async (req, res) => {
                 role: user.role,
                 phoneNumber: user.phoneNumber,
                 collegeName: user.collegeName,
+                gender: user.gender
             }
         });
 
@@ -146,11 +149,12 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        res.clearCookie('token', token, {
-            httpOnly:true, 
-            secure:false,
-            sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000
+        res.clearCookie('token', {
+           httpOnly:true, 
+            secure:true, // required for cross-site cookies over HTTPS
+            sameSite: 'none', // required when frontend & backend are on different domains
+            maxAge: 24 * 60 * 60 * 1000,
+            path: '/' // Ensure the cookie is accessible across the application
         });
         res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
@@ -176,6 +180,7 @@ export const check = async (req, res ) => {
                 role: req.user.role,
                 phoneNumber: req.user.phoneNumber,
                 collegeName: req.user.collegeName,
+                gender: req.user.gender
             }
         });
     } catch (error) {

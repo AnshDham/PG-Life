@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PG Life | Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-blue-600">PG Life</h1>
+
+
+      <!-- Login and Signup and Logout and Profile -->
+      <div class=" space-x-3" id="login-signup-profile-logout">
+      
+      </div>
+    </header>
+
+    <!-- Main Content Wrapper -->
+    <main class="flex-grow">
+      <!-- Banner Section -->
+      <section class="bg-pink-600 text-white text-center py-10">
+        <h2 class="text-3xl font-semibold mb-6">Happiness per Square Foot</h2>
+        <form action="property_list.html" method="GET" class="flex justify-center">
+          <div class="flex w-full max-w-xl">
+            <input type="text" name="city" id="city" placeholder="Enter your city to search for PGs" required class="w-full px-4 py-2 rounded-l-md focus:outline-none text-gray-800" oninput="searchBar()" />
+            <button type="submit" class="bg-white text-pink-600 px-4 py-2 rounded-r-md"><i class="fa fa-search"></i></button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Search Results (Supports Hidden Property) -->
+      <div class=" max-w-5xl mx-auto mt-10 ">
+        <h2 class="text-xl font-semibold mb-4 hidden" id="search-results-title">Search Results</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="search-results">
+          
+        </div>
+      </div>
+
+      <!-- Major Cities -->
+      <section class="text-center my-16 px-4">
+        <h2 class="text-2xl font-bold mb-8">Major Cities</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <a href="property_list.html?city=Delhi" class="rounded-xl overflow-hidden shadow-lg aspect-square w-full">
+            <img src="../Images/img/delhi.png" alt="Delhi" class="w-full h-full object-cover" loading="lazy" />
+          </a>
+          <a href="property_list.html?city=Mumbai" class="rounded-xl overflow-hidden shadow-lg aspect-square w-full">
+            <img src="../Images/img/mumbai.png" alt="Mumbai" class="w-full h-full object-cover" loading="lazy" />
+          </a>
+          <a href="property_list.html?city=Bengaluru" class="rounded-xl overflow-hidden shadow-lg aspect-square w-full">
+            <img src="../Images/img/bangalore.png" alt="Bengaluru" class="w-full h-full object-cover" loading="lazy" />
+          </a>
+          <a href="property_list.html?city=Hyderabad" class="rounded-xl overflow-hidden shadow-lg aspect-square w-full">
+            <img src="../Images/img/hyderabad.png" alt="Hyderabad" class="w-full h-full object-cover" loading="lazy" />
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white text-center py-4 border-t">
+      <p class="text-gray-600">&copy; 2025 PG Life</p>
+    </footer>
+
+    <script>
+      const BASE_URL = 'https://pg-life-backend-1.onrender.com'
+
+      const searchResultsContainer = document.getElementById("search-results");
+      // div , h3 , p , p , button
+      
+      const featchPropertys = async() => {
+        const res = await fetch(`${BASE_URL}/api/v1/property/get-properties`,{
+          method:"GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'include' // Include cookies in the request
+        })
+        
+        const data = await res.json()
+        
+        return data
+      }
+      
+      function searchBar(){
+          let input = document.querySelector('#city').value // Delhi
+          console.log('input',input);
+          console.log('input length',input.length);
+          let input1 = `Location: ${input}`
+          input1 = input1.toLocaleLowerCase().trim()
+          console.log('input1',input1);
+
+
+          // search result title
+          let searchResultsTitle = document.getElementById("search-results-title");
+          
+          
+          let PropertyArray = searchResultsContainer.children
+
+          console.log('PropertyArray',PropertyArray[1].children[0]);
+
+          let visiblePropertyCount = 0
+        
+          for (let i = 0; i < PropertyArray.length; i++){
+            let property = PropertyArray[i]
+            let propertyLocation = property.children[1].textContent.toLocaleLowerCase().trim()
+
+            console.log('property',propertyLocation);
+            if(input === ''){
+              property.style.display = 'none'
+            } else if(!propertyLocation.includes(input1.toLocaleLowerCase().trim())){
+              property.style.display = 'none'
+              searchResultsTitle.style.display = 'list-item';
+            }else{
+              searchResultsTitle.style.display = 'list-item';
+              searchResultsTitle.textContent = `Search Results for "${input}"`;
+              property.style.display = 'list-item'
+              visiblePropertyCount += 1
+            }
+            
+          }
+
+           if(input === ''){
+            searchResultsTitle.style.display = 'none';
+           }else if(visiblePropertyCount === 0){
+            searchResultsTitle.style.display = 'list-item';
+            searchResultsTitle.textContent = `No properties found for "${input}"`;
+          }else {
+            searchResultsTitle.style.display = 'list-item';
+            searchResultsTitle.textContent = `Search Results for "${input}"`;
+          }
+
+         }
+
+     const checkAuth = async () => {
+      const authIcon = document.getElementById('login-signup-profile-logout')
+
+       console.log('Checking user authentication...');
+        const userRes = await fetch(`${BASE_URL}/api/v1/auth/check`,{
+          credentials: 'include'
+        })
+        const userData = await userRes.json()
+        console.log('User data:', userData);
+        if (userRes.status !== 200) {
+         authIcon.innerHTML = `<a href="../Login/login.html" class="text-blue-600 font-medium hover:underline">Login</a>
+        <a href="../signUp/signup.html" class="text-blue-600 font-medium hover:underline" >Signup</a>`
+          return;
+        } else{
+         authIcon.innerHTML = ` 
+          <a href="../profile/profile.html" class="text-blue-600 font-medium hover:underline">Profile</a>
+          <a href="../Login/login.html" class="text-blue-600 font-medium hover:underline" onclick="logout()" >Logout</a> 
+          <a href="../All-Properties/all-properties.html" class="text-blue-600 font-medium hover:underline" >All Properties</a> 
+          `
+        return;
+        }
+      }
+
+    
+     const viewPropertyButton = (id) => {
+      const url = `../properties-detail/property-detail?id=${id}`;
+      console.log('Redirecting to:', url); // ✅ This confirms the URL
+      window.location.href = url;
+
+    };
+
+         
+    const logout = () => {
+      fetch(`${BASE_URL}/api/v1/auth/logout`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      window.location.href = '../Login/login.html';
+    }
+      
+    window.addEventListener('load', async function () {
+
+         // Reload the page if it was loaded from cache
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+              location.reload();
+            }
+        });
+
+       checkAuth()
+        
+       data = await featchPropertys()
+
+       console.log('data', data) // running
+
+       console.log('properties count' , data.properties.length) // running
+
+       const propertiesCount = data.properties.length
+
+      //  adding properties
+       
+       for(let i = 1; i <= propertiesCount; i++){
+        const property = data.properties[i-1]
+        
+        const div = document.createElement('div')
+        div.classList = 'bg-white p-4 rounded shadow hover:shadow-lg transition'
+        div.style.display = 'none'
+        
+
+
+        const h3 = document.createElement('h3')
+        h3.classList = 'text-lg font-semibold'
+        h3.textContent = property.propertyTitle
+
+
+
+        const p1 = document.createElement('p')
+        p1.classList = 'text-sm text-gray-600'
+        p1.textContent = `Location: ${property.location}`
+
+
+
+        const p2 = document.createElement('p')
+        p2.classList = 'text-sm text-gray-600'
+        p2.textContent = `Price: ₹${property.price}/month`
+
+
+
+        const link = document.createElement('a');
+        link.href = `../properties-detail/property-detail?id=${property.id}`;
+        link.classList = 'mt-2 text-blue-600 hover:underline text-sm inline-block';
+        link.textContent = 'View Details';
+
+        link.addEventListener('click', (event) => {
+          // event.stopPropagation(); // stop bubbling, not needed but safe
+          console.log('Clicked property ID:', property.id);
+        });
+
+
+
+
+        const p3 = document.createElement('p')
+        p3.classList = 'property-id text-sm text-gray-600 hidden'
+        p3.textContent = property.id
+        console.log('property id', String(property.id));
+        
+
+
+
+
+
+        div.append(h3, p1, p2, p3, link )
+        searchResultsContainer.appendChild(div)
+
+
+
+              
+       }
+
+       
+
+
+      })
+
+    </script>
+  </body>
+</html>

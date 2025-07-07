@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>All Properties | PG Life</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <!-- Header -->
+  <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">PG Life</h1>
+    <a href="../home/home.html" class="text-sm text-blue-600 hover:underline">Home</a>
+  </header>
+
+  <!-- Main Section -->
+  <main class="max-w-7xl mx-auto px-4 py-10" >
+    <h2 class="text-2xl font-bold mb-6">Available Properties</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="property-list">
+      <!-- Property Card -->
+      
+      </div>
+
+      <!-- Add more property cards as needed -->
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t text-center py-4 mt-10">
+    <p class="text-gray-600 text-sm">&copy; 2025 PG Life. All rights reserved.</p>
+  </footer>
+
+  <script>
+      const BASE_URL = 'https://pg-life-backend-1.onrender.com'
+
+   async function checkAuth() {
+        console.log('Checking user authentication...');
+        const userRes = await fetch(`${BASE_URL}/api/v1/auth/check`,{
+          credentials: 'include'
+        })
+        const userData = await userRes.json()
+        console.log('User data:', userData);
+        if (userRes.status !== 200) {
+          window.location.href = '../pages/loginPage/Login.html';
+          return;
+        }
+    }
+
+
+
+     async function featchPropertys() {
+        const res = await fetch(`${BASE_URL}/api/v1/property/get-properties`,{
+          method:"GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'include' // Include cookies in the request
+        })
+        
+        const data = await res.json()
+        
+        return data
+      }
+
+      window.onload = async function() {
+        checkAuth()
+        const data = await featchPropertys()
+        console.log('propertys',data);
+
+        const propertiesCount = data.properties.length
+        console.log('propertiesCount',propertiesCount);
+
+        const container = document.getElementById('property-list')
+
+        for (let i = 0; i < propertiesCount; i++) {
+          const property = data.properties[i];
+          console.log('property',property);
+
+          const card = document.createElement('div');
+          card.classList.add('bg-white', 'shadow', 'rounded-lg', 'overflow-hidden');
+          card.innerHTML = `
+            <img src="../images/img/properties/1/3.jpg" alt="PG" class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h3 class="text-lg font-semibold">${property.propertyTitle}</h3>
+              <p class="text-sm text-gray-600">Location: ${property.location}</p>
+              <p class="text-sm text-green-600">Price: ₹${property.price}/month</p>
+              <a href="../properties-detail/property-detail?id=${property.id}" class="mt-3 inline-block text-sm text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">View Details</a>
+            </div>
+          `;
+          container.appendChild(card);
+
+      }
+    } 
+
+  </script>
+</body>
+</html>

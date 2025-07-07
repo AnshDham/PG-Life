@@ -33,6 +33,11 @@ const UserSchema = new mongoose.Schema({
         trim: true
     },
     faverateProperties:[],
+    gender:{
+        type: String,
+        enum: ["male", "female"],
+        default: "male"
+    },
     isVerified:{
         type: Boolean,
         default: false

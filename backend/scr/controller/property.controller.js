@@ -63,11 +63,11 @@ export const getProperties = async (req, res) => {
                 price: property.price,
                 location: property.location,
                 images: property.images,
-                owner: {
-                    id: property.owner._id,
-                    name: property.owner.name,
-                    email: property.owner.email
-                }
+                // owner: {
+                //     id: property.owner._id,
+                //     name: property.owner.name,
+                //     email: property.owner.email
+                // }
             }))
         });
     } catch (error) {
@@ -89,7 +89,8 @@ export const getPropertyById = async (req, res) => {
         const propertyId = req.params.id;
 
         // Fetch property by ID from the database
-        const property = await Property.findById(propertyId).populate('owner', 'name email');
+        const property = await Property.findById(propertyId?.toString());
+
 
         if (!property) {
             return res.status(404).json({ message: 'Property not found' });
@@ -104,11 +105,11 @@ export const getPropertyById = async (req, res) => {
                 price: property.price,  
                 location: property.location,
                 images: property.images,                
-                owner: {
-                    id: property.owner._id,
-                    name: property.owner.name,
-                    email: property.owner.email
-                }
+                // owner: {
+                //     id: property.owner._id,
+                //     name: property.owner.name,
+                //     email: property.owner.email
+                // }
             }
         })
                 
